@@ -23,7 +23,7 @@ with st.sidebar:
     
     api_key = st.text_input("Google Gemini API Key", value="AIzaSyDdhBQhmX_IXPH1vrIQA0hu4pyXhw9eSR4", type="password", help="Cole sua API key aqui")
     
-    hf_token = st.text_input("Hugging Face Token", value="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", type="password", help="Cole seu token do Hugging Face")
+    hf_token = st.text_input("Hugging Face Token", value="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", type="password", help="Cole seu token do Hugging Face")
     
     st.markdown("[📖 Como pegar Gemini API Key](https://aistudio.google.com/apikey)")
     st.markdown("[🤗 Como pegar HF Token](https://huggingface.co/settings/tokens)")
