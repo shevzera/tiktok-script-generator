@@ -21,14 +21,6 @@ st.markdown("**Gere roteiros virais em inglês + Image Prompts + Descrição + H
 with st.sidebar:
     st.header("⚙️ Configuração")
     
-    api_key = st.text_input("Google Gemini API Key", value="AIzaSyDdhBQhmX_IXPH1vrIQA0hu4pyXhw9eSR4", type="password", help="Cole sua API key aqui")
-    
-    hf_token = st.text_input("Hugging Face Token", value="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", type="password", help="Cole seu token do Hugging Face")
-    
-    st.markdown("[📖 Como pegar Gemini API Key](https://aistudio.google.com/apikey)")
-    st.markdown("[🤗 Como pegar HF Token](https://huggingface.co/settings/tokens)")
-    
-    st.markdown("---")
     st.markdown("### 📏 Especificações")
     st.info("✅ Script: 1300-1500 caracteres\n\n✅ Estilo: Viral\n\n✅ Público: Americano\n\n✅ Duração: ~60 segundos")
     
@@ -36,7 +28,7 @@ with st.sidebar:
     st.markdown("### 🎨 Geração de Imagens")
     gerar_imagens = st.checkbox("Gerar imagens automaticamente", value=True)
     if gerar_imagens:
-        st.info("As imagens serão geradas após o roteiro usando Stable Diffusion XL")
+        st.info("As imagens serão geradas com Pollinations.ai (100% gratuito)")
 
 col1, col2 = st.columns([1, 1])
 
@@ -48,15 +40,12 @@ with col2:
 
 if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_width=True):
     
-    if not api_key:
-        st.error("⚠️ Por favor, insira sua API Key do Gemini na barra lateral!")
-        st.stop()
-    
     if not tema and not roteiro_exemplo:
         st.error("⚠️ Insira um tema OU um roteiro pronto!")
         st.stop()
     
     try:
+        api_key = "AIzaSyDdhBQhmX_IXPH1vrIQA0hu4pyXhw9eSR4"
         genai.configure(api_key=api_key)
         model_text = genai.GenerativeModel('gemini-2.0-flash-exp')
         
@@ -173,18 +162,10 @@ DESCRIÇÃO + HASHTAGS:
         st.markdown("---")
         st.download_button("📥 Download Completo", data=texto_completo, file_name=f"tiktok_{char_count}chars.txt", mime="text/plain", use_container_width=True)
         
-        if gerar_imagens and prompts_list and hf_token:
+        if gerar_imagens and prompts_list:
             st.markdown("---")
             st.markdown("### 🖼️ Imagens Geradas com IA")
-            st.info(f"🎨 Gerando {len(prompts_list)} imagens com Stable Diffusion XL... Isso pode levar alguns minutos.")
-            
-            API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
-            headers = {"Authorization": f"Bearer {hf_token}"}
-            
-            def query_huggingface(prompt_text):
-                payload = {"inputs": prompt_text}
-                response = requests.post(API_URL, headers=headers, json=payload)
-                return response
+            st.info(f"🎨 Gerando {len(prompts_list)} imagens com Pollinations.ai... Isso pode levar alguns minutos.")
             
             for idx, prompt_data in enumerate(prompts_list):
                 timestamp = prompt_data["timestamp"]
@@ -194,7 +175,10 @@ DESCRIÇÃO + HASHTAGS:
                 
                 with st.spinner(f"🎨 Gerando imagem {idx+1}/{len(prompts_list)}..."):
                     try:
-                        response_img = query_huggingface(prompt_img)
+                        prompt_encoded = requests.utils.quote(prompt_img)
+                        image_url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=1024&height=1024&nologo=true"
+                        
+                        response_img = requests.get(image_url, timeout=30)
                         
                         if response_img.status_code == 200:
                             image = Image.open(BytesIO(response_img.content))
@@ -211,8 +195,6 @@ DESCRIÇÃO + HASHTAGS:
                             )
                         else:
                             st.warning(f"⚠️ Erro ao gerar imagem: {response_img.status_code}")
-                            if "error" in response_img.text:
-                                st.info("💡 O modelo está carregando. Aguarde 20 segundos e tente novamente.")
                             st.code(prompt_img, language="text")
                         
                         time.sleep(2)
@@ -222,15 +204,10 @@ DESCRIÇÃO + HASHTAGS:
                         st.info(f"💡 Use este prompt em Midjourney ou DALL-E:")
                         st.code(prompt_img, language="text")
             
-            st.success(f"✅ Processo de geração concluído!")
-        
-        elif gerar_imagens and not hf_token:
-            st.warning("⚠️ Adicione seu Hugging Face Token na barra lateral para gerar imagens automaticamente!")
+            st.success(f"✅ Todas as {len(prompts_list)} imagens foram geradas!")
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
-        import traceback
-        st.code(traceback.format_exc())
 
 st.markdown("---")
-st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash + Stable Diffusion XL")
+st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash + Pollinations.ai")
