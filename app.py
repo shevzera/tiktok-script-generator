@@ -59,11 +59,17 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
         st.stop()
     
     try:
+        st.write("🔍 DEBUG 1: Iniciando configuração...")
+        
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-2.0-flash-exp')
         
+        st.write("🔍 DEBUG 2: Modelo configurado")
+        
         base_content = roteiro_exemplo if roteiro_exemplo else tema
         content_type = "ROTEIRO ORIGINAL (português)" if roteiro_exemplo else "TEMA (português)"
+        
+        st.write(f"🔍 DEBUG 3: Conteúdo = {base_content[:50]}...")
         
         prompt = f"""Você é um especialista em criar conteúdo VIRAL para TikTok voltado para o público AMERICANO.
 
@@ -71,47 +77,56 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
 
 REGRAS IMPORTANTES:
 - O SCRIPT deve ter EXATAMENTE entre 1300-1500 caracteres (OBRIGATÓRIO)
-- Crie conteúdo COMPLETO e DETALHADO
-- Estilo VIRAL com gancho forte nos primeiros 3 segundos
-- NO SCRIPT: NÃO incluir marcações de segundos (ex: [0-3s]), APENAS as marcações [PAUSE], [EMPHASIS], [BREATH]
+- NO SCRIPT: NÃO incluir marcações de segundos, APENAS [PAUSE], [EMPHASIS], [BREATH]
 
 ENTREGUE NO FORMATO:
 
 SCRIPT|||
-[Script completo em inglês formatado para ElevenLabs APENAS com marcações [PAUSE], [EMPHASIS], [BREATH]. SEM marcações de segundos [0-3s]. Linguagem simples conversacional. 1300-1500 CARACTERES OBRIGATÓRIO]
+[Script completo em inglês formatado para ElevenLabs APENAS com [PAUSE], [EMPHASIS], [BREATH]. SEM [0-3s]. 1300-1500 CARACTERES]
 
 PROMPTS|||
-0-3s: Cinematic [descrição ultra detalhada: composição específica, lighting detalhado, camera angle preciso, mood, cores específicas, texturas, movimento de câmera]. Hyper-realistic, 4K quality, professional color grading.
-3-7s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-7-12s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-12-17s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-17-22s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-22-27s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-27-32s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-32-37s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-37-42s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-42-45s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-45-50s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+0-3s: Cinematic [descrição ultra detalhada: composição, lighting, camera angle, mood, cores, texturas, movimento]. Hyper-realistic, 4K.
+3-7s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+7-12s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+12-17s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+17-22s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+22-27s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+27-32s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+32-37s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+37-42s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+42-45s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+45-50s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
 
 DESCRIPTION|||
-[Descrição 150-200 caracteres engajante com call-to-action americano forte]
+[Descrição 150-200 caracteres com call-to-action americano]
 
-[8-10 hashtags trending EUA incluindo #fyp #viral e específicos do tema, separados por espaço]
+[8-10 hashtags trending EUA incluindo #fyp #viral]
 """
+        
+        st.write("🔍 DEBUG 4: Enviando prompt para Gemini...")
         
         with st.spinner("🤖 Gerando seu conteúdo viral..."):
             response = model.generate_content(prompt)
             resultado = response.text
         
+        st.write("🔍 DEBUG 5: Resposta recebida!")
+        st.write(f"🔍 DEBUG 6: Tamanho da resposta = {len(resultado)} caracteres")
+        st.write(f"🔍 DEBUG 7: Primeiros 300 chars = {resultado[:300]}")
+        
         partes = resultado.split("|||")
+        st.write(f"🔍 DEBUG 8: Número de partes após split = {len(partes)}")
         
         if len(partes) < 4:
-            st.error("❌ Formato de resposta inválido. Tentando novamente...")
+            st.error(f"❌ Formato inválido. Esperava 4 partes, recebi {len(partes)}")
+            st.write("Resposta completa:")
+            st.code(resultado)
             st.stop()
         
         script_text = partes[1].strip()
         prompts_text = partes[2].strip()
         description_text = partes[3].strip()
+        
+        st.write(f"🔍 DEBUG 9: Script extraído com {len(script_text)} caracteres")
         
         char_count = len(script_text)
         
@@ -183,6 +198,8 @@ DESCRIÇÃO + HASHTAGS:
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
+        import traceback
+        st.code(traceback.format_exc())
 
 st.markdown("---")
 st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash")
