@@ -1,5 +1,9 @@
 import streamlit as st
 import google.generativeai as genai
+import requests
+from PIL import Image
+from io import BytesIO
+import time
 
 st.set_page_config(page_title="TikTok Script Generator", page_icon="🎬", layout="wide")
 
@@ -12,15 +16,27 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("🎬 TikTok Script Generator")
-st.markdown("**Gere roteiros virais em inglês + Image Prompts + Descrição + Hashtags**")
+st.markdown("**Gere roteiros virais em inglês + Image Prompts + Descrição + Hashtags + Imagens com IA**")
 
 with st.sidebar:
     st.header("⚙️ Configuração")
-    api_key = st.text_input("Google Gemini API Key", type="password", help="Cole sua API key aqui")
-    st.markdown("[📖 Como pegar API Key](https://aistudio.google.com/apikey)")
+    
+    api_key = st.text_input("Google Gemini API Key", value="AIzaSyDdhBQhmX_IXPH1vrIQA0hu4pyXhw9eSR4", type="password", help="Cole sua API key aqui")
+    
+    hf_token = st.text_input("Hugging Face Token", value="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", type="password", help="Cole seu token do Hugging Face")
+    
+    st.markdown("[📖 Como pegar Gemini API Key](https://aistudio.google.com/apikey)")
+    st.markdown("[🤗 Como pegar HF Token](https://huggingface.co/settings/tokens)")
+    
     st.markdown("---")
     st.markdown("### 📏 Especificações")
     st.info("✅ Script: 1300-1500 caracteres\n\n✅ Estilo: Viral\n\n✅ Público: Americano\n\n✅ Duração: ~60 segundos")
+    
+    st.markdown("---")
+    st.markdown("### 🎨 Geração de Imagens")
+    gerar_imagens = st.checkbox("Gerar imagens automaticamente", value=True)
+    if gerar_imagens:
+        st.info("As imagens serão geradas após o roteiro usando Stable Diffusion XL")
 
 col1, col2 = st.columns([1, 1])
 
@@ -33,7 +49,7 @@ with col2:
 if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_width=True):
     
     if not api_key:
-        st.error("⚠️ Por favor, insira sua API Key na barra lateral!")
+        st.error("⚠️ Por favor, insira sua API Key do Gemini na barra lateral!")
         st.stop()
     
     if not tema and not roteiro_exemplo:
@@ -42,7 +58,7 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
     
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model_text = genai.GenerativeModel('gemini-2.0-flash-exp')
         
         base_content = roteiro_exemplo if roteiro_exemplo else tema
         content_type = "ROTEIRO ORIGINAL (português)" if roteiro_exemplo else "TEMA (português)"
@@ -62,17 +78,17 @@ SCRIPT|||
 [Script completo em inglês formatado para ElevenLabs APENAS com [PAUSE], [EMPHASIS], [BREATH]. SEM [0-3s]. 1300-1500 caracteres. Estilo viral com gancho forte nos primeiros 3 segundos. Linguagem simples para público americano.]
 
 PROMPTS|||
-0-3s: Cinematic [descrição ultra detalhada: composição específica, lighting detalhado, camera angle preciso, mood, cores, texturas, movimento]. Hyper-realistic, 4K quality, professional color grading.
-3-7s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-7-12s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-12-17s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-17-22s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-22-27s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-27-32s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-32-37s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-37-42s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-42-47s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
-47-52s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+0-3s: [descrição ULTRA detalhada para geração de imagem: composição específica, lighting detalhado, camera angle preciso, mood, cores, texturas, movimento]. Cinematic, hyper-realistic, 4K quality, professional color grading.
+3-7s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+7-12s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+12-17s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+17-22s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+22-27s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+27-32s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+32-37s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+37-42s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+42-47s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
+47-52s: [descrição ultra detalhada completa]. Cinematic, hyper-realistic, 4K quality.
 
 DESCRIPTION|||
 [Descrição engajante de 150-200 caracteres com call-to-action americano forte]
@@ -80,8 +96,8 @@ DESCRIPTION|||
 [8-10 hashtags trending nos EUA incluindo #fyp #viral e específicos do tema]
 """
         
-        with st.spinner("🤖 Gerando seu conteúdo viral..."):
-            response = model.generate_content(prompt)
+        with st.spinner("🤖 Gerando roteiro e prompts..."):
+            response = model_text.generate_content(prompt)
             resultado = response.text
         
         partes = resultado.split("|||")
@@ -128,12 +144,15 @@ DESCRIPTION|||
         st.markdown("### 🎨 Prompts das Imagens")
         
         prompts_lines = [line.strip() for line in prompts_text.split('\n') if line.strip()]
+        prompts_list = []
         
         for prompt_line in prompts_lines:
             if ':' in prompt_line:
                 parts = prompt_line.split(':', 1)
                 timestamp = parts[0].strip()
                 content = parts[1].strip()
+                
+                prompts_list.append({"timestamp": timestamp, "prompt": content})
                 
                 st.markdown(f"**⏱️ {timestamp}**")
                 st.code(content, language="text")
@@ -151,12 +170,67 @@ DESCRIÇÃO + HASHTAGS:
 {description_text}
 """
         
-        st.download_button("📥 Download Completo", data=texto_completo, file_name=f"tiktok_{char_count}chars.txt", mime="text/plain")
+        st.markdown("---")
+        st.download_button("📥 Download Completo", data=texto_completo, file_name=f"tiktok_{char_count}chars.txt", mime="text/plain", use_container_width=True)
+        
+        if gerar_imagens and prompts_list and hf_token:
+            st.markdown("---")
+            st.markdown("### 🖼️ Imagens Geradas com IA")
+            st.info(f"🎨 Gerando {len(prompts_list)} imagens com Stable Diffusion XL... Isso pode levar alguns minutos.")
+            
+            API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+            headers = {"Authorization": f"Bearer {hf_token}"}
+            
+            def query_huggingface(prompt_text):
+                payload = {"inputs": prompt_text}
+                response = requests.post(API_URL, headers=headers, json=payload)
+                return response
+            
+            for idx, prompt_data in enumerate(prompts_list):
+                timestamp = prompt_data["timestamp"]
+                prompt_img = prompt_data["prompt"]
+                
+                st.markdown(f"#### 📸 {timestamp}")
+                
+                with st.spinner(f"🎨 Gerando imagem {idx+1}/{len(prompts_list)}..."):
+                    try:
+                        response_img = query_huggingface(prompt_img)
+                        
+                        if response_img.status_code == 200:
+                            image = Image.open(BytesIO(response_img.content))
+                            st.image(image, caption=f"Imagem gerada para {timestamp}", use_container_width=True)
+                            
+                            buf = BytesIO()
+                            image.save(buf, format="PNG")
+                            st.download_button(
+                                label=f"📥 Download {timestamp}",
+                                data=buf.getvalue(),
+                                file_name=f"tiktok_image_{timestamp.replace(':', '-')}.png",
+                                mime="image/png",
+                                key=f"download_{idx}"
+                            )
+                        else:
+                            st.warning(f"⚠️ Erro ao gerar imagem: {response_img.status_code}")
+                            if "error" in response_img.text:
+                                st.info("💡 O modelo está carregando. Aguarde 20 segundos e tente novamente.")
+                            st.code(prompt_img, language="text")
+                        
+                        time.sleep(2)
+                        
+                    except Exception as e:
+                        st.error(f"❌ Erro: {str(e)}")
+                        st.info(f"💡 Use este prompt em Midjourney ou DALL-E:")
+                        st.code(prompt_img, language="text")
+            
+            st.success(f"✅ Processo de geração concluído!")
+        
+        elif gerar_imagens and not hf_token:
+            st.warning("⚠️ Adicione seu Hugging Face Token na barra lateral para gerar imagens automaticamente!")
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
-        st.info("Tentando novamente automaticamente...")
-        st.rerun()
+        import traceback
+        st.code(traceback.format_exc())
 
 st.markdown("---")
-st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash")
+st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash + Stable Diffusion XL")
