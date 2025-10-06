@@ -5,26 +5,8 @@ st.set_page_config(page_title="TikTok Script Generator", page_icon="🎬", layou
 
 st.markdown("""
 <style>
-    .script-box {
-        background-color: #1E1E1E;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 4px solid #FF0050;
-        margin: 10px 0;
-    }
-    .prompt-box {
-        background-color: #2D2D2D;
-        padding: 15px;
-        border-radius: 10px;
-        border-left: 4px solid #00D9FF;
-        margin: 10px 0;
-    }
-    .description-box {
-        background-color: #1E1E1E;
-        padding: 15px;
-        border-radius: 10px;
-        border-left: 4px solid #00FF88;
-        margin: 10px 0;
+    .stCodeBlock {
+        margin-top: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -59,17 +41,11 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
         st.stop()
     
     try:
-        st.write("🔍 DEBUG 1: Iniciando configuração...")
-        
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-2.0-flash-exp')
         
-        st.write("🔍 DEBUG 2: Modelo configurado")
-        
         base_content = roteiro_exemplo if roteiro_exemplo else tema
         content_type = "ROTEIRO ORIGINAL (português)" if roteiro_exemplo else "TEMA (português)"
-        
-        st.write(f"🔍 DEBUG 3: Conteúdo = {base_content[:50]}...")
         
         prompt = f"""Você é um especialista em criar conteúdo VIRAL para TikTok voltado para o público AMERICANO.
 
@@ -103,30 +79,19 @@ DESCRIPTION|||
 [8-10 hashtags trending EUA incluindo #fyp #viral]
 """
         
-        st.write("🔍 DEBUG 4: Enviando prompt para Gemini...")
-        
         with st.spinner("🤖 Gerando seu conteúdo viral..."):
             response = model.generate_content(prompt)
             resultado = response.text
         
-        st.write("🔍 DEBUG 5: Resposta recebida!")
-        st.write(f"🔍 DEBUG 6: Tamanho da resposta = {len(resultado)} caracteres")
-        st.write(f"🔍 DEBUG 7: Primeiros 300 chars = {resultado[:300]}")
-        
         partes = resultado.split("|||")
-        st.write(f"🔍 DEBUG 8: Número de partes após split = {len(partes)}")
         
         if len(partes) < 4:
-            st.error(f"❌ Formato inválido. Esperava 4 partes, recebi {len(partes)}")
-            st.write("Resposta completa:")
-            st.code(resultado)
+            st.error(f"❌ Formato inválido. Tentando novamente...")
             st.stop()
         
         script_text = partes[1].strip()
         prompts_text = partes[2].strip()
         description_text = partes[3].strip()
-        
-        st.write(f"🔍 DEBUG 9: Script extraído com {len(script_text)} caracteres")
         
         char_count = len(script_text)
         
@@ -150,16 +115,9 @@ DESCRIPTION|||
         st.markdown("---")
         
         st.markdown("### 🎙️ Roteiro (ElevenLabs Ready)")
-        st.markdown("")
-        st.markdown('<div class="script-box">', unsafe_allow_html=True)
-        st.markdown(script_text.replace("[PAUSE]", "**[PAUSE]**").replace("[EMPHASIS]", "**[EMPHASIS]**").replace("[BREATH]", "**[BREATH]**"))
-        st.markdown('</div>', unsafe_allow_html=True)
         st.code(script_text, language="text")
         
-        st.markdown("---")
-        
         st.markdown("### 🎨 Prompts das Imagens")
-        st.markdown("")
         
         prompts_lines = [line.strip() for line in prompts_text.split('\n') if line.strip()]
         
@@ -170,18 +128,9 @@ DESCRIPTION|||
                 content = parts[1].strip()
                 
                 st.markdown(f"**⏱️ {timestamp}**")
-                st.markdown('<div class="prompt-box">', unsafe_allow_html=True)
-                st.markdown(content)
-                st.markdown('</div>', unsafe_allow_html=True)
                 st.code(content, language="text")
         
-        st.markdown("---")
-        
         st.markdown("### 📝 Descrição + Hashtags")
-        st.markdown("")
-        st.markdown('<div class="description-box">', unsafe_allow_html=True)
-        st.markdown(description_text)
-        st.markdown('</div>', unsafe_allow_html=True)
         st.code(description_text, language="text")
         
         texto_completo = f"""ROTEIRO:
@@ -198,8 +147,6 @@ DESCRIÇÃO + HASHTAGS:
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
-        import traceback
-        st.code(traceback.format_exc())
 
 st.markdown("---")
 st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash")
