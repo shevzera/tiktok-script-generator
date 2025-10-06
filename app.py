@@ -52,31 +52,32 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
 {content_type}: {base_content}
 
 REGRAS IMPORTANTES:
-- O SCRIPT deve ter EXATAMENTE entre 1300-1500 caracteres (OBRIGATÓRIO)
+- O SCRIPT deve ter entre 1300-1500 caracteres
 - NO SCRIPT: NÃO incluir marcações de segundos, APENAS [PAUSE], [EMPHASIS], [BREATH]
+- Seja criativo e detalhado para atingir o tamanho ideal
 
-ENTREGUE NO FORMATO:
+ENTREGUE EXATAMENTE NO FORMATO (com os delimitadores |||):
 
 SCRIPT|||
-[Script completo em inglês formatado para ElevenLabs APENAS com [PAUSE], [EMPHASIS], [BREATH]. SEM [0-3s]. 1300-1500 CARACTERES]
+[Script completo em inglês formatado para ElevenLabs APENAS com [PAUSE], [EMPHASIS], [BREATH]. SEM [0-3s]. 1300-1500 caracteres. Estilo viral com gancho forte nos primeiros 3 segundos. Linguagem simples para público americano.]
 
 PROMPTS|||
-0-3s: Cinematic [descrição ultra detalhada: composição, lighting, camera angle, mood, cores, texturas, movimento]. Hyper-realistic, 4K.
-3-7s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-7-12s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-12-17s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-17-22s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-22-27s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-27-32s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-32-37s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-37-42s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-42-45s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
-45-50s: Cinematic [descrição ultra detalhada]. Hyper-realistic, 4K.
+0-3s: Cinematic [descrição ultra detalhada: composição específica, lighting detalhado, camera angle preciso, mood, cores, texturas, movimento]. Hyper-realistic, 4K quality, professional color grading.
+3-7s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+7-12s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+12-17s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+17-22s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+22-27s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+27-32s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+32-37s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+37-42s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+42-47s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
+47-52s: Cinematic [descrição ultra detalhada completa]. Hyper-realistic, 4K quality.
 
 DESCRIPTION|||
-[Descrição 150-200 caracteres com call-to-action americano]
+[Descrição engajante de 150-200 caracteres com call-to-action americano forte]
 
-[8-10 hashtags trending EUA incluindo #fyp #viral]
+[8-10 hashtags trending nos EUA incluindo #fyp #viral e específicos do tema]
 """
         
         with st.spinner("🤖 Gerando seu conteúdo viral..."):
@@ -86,20 +87,22 @@ DESCRIPTION|||
         partes = resultado.split("|||")
         
         if len(partes) < 4:
-            st.error(f"❌ Formato inválido. Tentando novamente...")
-            st.stop()
+            st.error(f"❌ Erro no formato. Tentando novamente...")
+            st.rerun()
         
         script_text = partes[1].strip()
         prompts_text = partes[2].strip()
         description_text = partes[3].strip()
         
+        script_text = script_text.replace("PROMPTS", "").replace("PROMPT", "").strip()
+        
         char_count = len(script_text)
         
-        if char_count < 1300:
+        if char_count < 1200:
             st.warning(f"⚠️ Script muito curto ({char_count} caracteres). Gerando novamente...")
             st.rerun()
-        elif char_count > 1500:
-            script_text = script_text[:1500].rsplit('.', 1)[0] + '.'
+        elif char_count > 1600:
+            script_text = script_text[:1550].rsplit('.', 1)[0] + '.'
             char_count = len(script_text)
         
         st.success("✅ Conteúdo gerado com sucesso!")
@@ -110,7 +113,12 @@ DESCRIPTION|||
         with col2:
             st.metric("⏱️ Duração", "~60s")
         with col3:
-            st.metric("Status", "✅ Aprovado" if 1300 <= char_count <= 1500 else "⚠️ Revisar")
+            if 1300 <= char_count <= 1500:
+                st.metric("Status", "✅ Perfeito")
+            elif 1200 <= char_count < 1300:
+                st.metric("Status", "✅ Bom")
+            else:
+                st.metric("Status", "✅ Ok")
         
         st.markdown("---")
         
@@ -147,6 +155,8 @@ DESCRIÇÃO + HASHTAGS:
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
+        st.info("Tentando novamente automaticamente...")
+        st.rerun()
 
 st.markdown("---")
 st.markdown("Made with ❤️ | Powered by Google Gemini 2.0 Flash")
