@@ -31,17 +31,16 @@ with st.sidebar:
     estilo_imagem = st.selectbox(
         "Estilo Visual",
         [
-            "Cinematic Film (Qualidade máxima)",
+            "Cinematic Film (Recomendado)",
             "Documentary Photography",
             "Dark Moody Cinematic",
-            "Netflix Documentary Style",
-            "True Crime Aesthetic",
-            "Vintage Film Noir"
+            "Netflix Documentary",
+            "True Crime Aesthetic"
         ]
     )
     
     if gerar_imagens:
-        st.info("🎨 Imagens com **Flux via Pollinations** (alta qualidade)")
+        st.info("🎨 Imagens com **Flux** (alta qualidade)")
 
 col1, col2 = st.columns([1, 1])
 
@@ -65,18 +64,6 @@ if st.button("🚀 Gerar Conteúdo Completo", type="primary", use_container_widt
         base_content = roteiro_exemplo if roteiro_exemplo else tema
         content_type = "ROTEIRO ORIGINAL (português)" if roteiro_exemplo else "TEMA (português)"
         
-        # Definir estilo base
-        style_mappings = {
-            "Cinematic Film (Qualidade máxima)": "cinematic film still, shot on ARRI ALEXA, shallow depth of field, film grain, professional color grading, volumetric lighting, 8K UHD, masterpiece",
-            "Documentary Photography": "documentary photography, photojournalism style, real life moment, natural lighting, authentic, raw emotion, National Geographic style, award-winning photograph",
-            "Dark Moody Cinematic": "dark moody cinematic, film noir aesthetic, dramatic shadows, high contrast, desaturated colors, neo-noir style, atmospheric fog, chiaroscuro lighting",
-            "Netflix Documentary Style": "Netflix documentary cinematography, professional documentary film, natural lighting, subtle color grading, intimate framing, 4K Netflix quality",
-            "True Crime Aesthetic": "true crime documentary aesthetic, forensic photography style, evidence photo quality, cold color temperature, stark lighting, investigative journalism style",
-            "Vintage Film Noir": "vintage film noir, 1940s crime photography, black and white film, grain texture, high contrast, classic Hollywood cinematography, vintage newspaper photo"
-        }
-        
-        style_suffix = style_mappings.get(estilo_imagem, style_mappings["Cinematic Film (Qualidade máxima)"])
-        
         prompt = f"""Você é um especialista em criar conteúdo VIRAL para TikTok voltado para o público AMERICANO.
 
 {content_type}: {base_content}
@@ -85,18 +72,7 @@ REGRAS IMPORTANTES:
 - O SCRIPT deve ter entre 1300-1500 caracteres
 - NO SCRIPT: NÃO incluir marcações de segundos, APENAS [PAUSE], [EMPHASIS], [BREATH]
 - Seja criativo e detalhado para atingir o tamanho ideal
-
-PARA OS PROMPTS DE IMAGEM, SEJA EXTREMAMENTE DETALHADO:
-- Descreva EXATAMENTE o que aparece na cena
-- Especifique composição precisa (rule of thirds, center frame, etc)
-- Detalhe o lighting (golden hour, rim light, harsh shadows, soft diffused, neon glow, etc)
-- Especifique camera angle (low angle, high angle, dutch tilt, eye level, bird's eye view, etc)
-- Descreva mood e atmosfera (tense, mysterious, dramatic, eerie, suspenseful, etc)
-- Especifique cores dominantes (cold blue tones, warm amber, desaturated, high contrast, etc)
-- Descreva texturas visíveis (weathered wood, rusted metal, aged paper, smooth glass, etc)
-- Inclua movimento de câmera (slow zoom, static shot, slight pan, dolly push, etc)
-- Adicione elementos de contexto (time of day, weather, era/period, location details)
-- Especifique qualidade técnica (sharp focus, bokeh, film grain, lens flare, etc)
+- Para os IMAGE PROMPTS: seja MUITO detalhado, descrevendo composição, lighting (tipo específico como golden hour, neon glow, rim lighting), camera angle preciso (low angle, bird's eye, dutch tilt), mood claro (tense, eerie, dramatic), cores dominantes, texturas visíveis, movimento de câmera, contexto temporal/espacial
 
 ENTREGUE EXATAMENTE NO FORMATO (com os delimitadores |||):
 
@@ -104,27 +80,27 @@ SCRIPT|||
 [Script completo em inglês formatado para ElevenLabs APENAS com [PAUSE], [EMPHASIS], [BREATH]. SEM [0-3s]. 1300-1500 caracteres. Estilo viral com gancho forte nos primeiros 3 segundos. Linguagem simples para público americano.]
 
 PROMPTS|||
-0-3s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras descrevendo a cena visual completa com precisão cinematográfica. Inclua: o que aparece, onde está posicionado, como está iluminado, ângulo de câmera, mood, cores, texturas, movimento, contexto temporal/espacial]
+0-3s: [Descrição visual detalhada e precisa da cena, incluindo: o que aparece exatamente, composição específica, lighting detalhado, camera angle preciso, mood/atmosfera, cores dominantes, texturas visíveis, movimento, contexto espacial/temporal]. Cinematic, hyper-realistic, 4K quality, professional color grading.
 
-3-7s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+3-7s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-7-12s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+7-12s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-12-17s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+12-17s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-17-22s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+17-22s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-22-27s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+22-27s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-27-32s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+27-32s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-32-37s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+32-37s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-37-42s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+37-42s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-42-47s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+42-47s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
-47-52s: [DESCRIÇÃO ULTRA DETALHADA com TODOS os elementos acima. Mínimo 150 palavras]
+47-52s: [Descrição visual detalhada e precisa com todos os elementos acima]. Cinematic, hyper-realistic, 4K quality.
 
 DESCRIPTION|||
 [Descrição engajante de 150-200 caracteres com call-to-action americano forte]
@@ -132,7 +108,7 @@ DESCRIPTION|||
 [8-10 hashtags trending nos EUA incluindo #fyp #viral e específicos do tema]
 """
         
-        with st.spinner("🤖 Gerando roteiro e prompts ultra-detalhados..."):
+        with st.spinner("🤖 Gerando roteiro e prompts..."):
             response = model_text.generate_content(prompt)
             resultado = response.text
         
@@ -214,19 +190,27 @@ DESCRIÇÃO + HASHTAGS:
             st.markdown("### 🖼️ Imagens Geradas com IA")
             st.info(f"🎨 Gerando {len(prompts_list)} imagens em estilo **{estilo_imagem}**... Aguarde.")
             
-            # Negative prompt para melhor qualidade
-            negative_prompt = "low quality, blurry, distorted, deformed, ugly, bad anatomy, bad proportions, watermark, text, signature, amateur, low resolution, pixelated, jpeg artifacts"
+            # Estilos otimizados
+            style_mappings = {
+                "Cinematic Film (Recomendado)": "cinematic film still, shot on ARRI ALEXA, shallow depth of field, film grain, professional color grading, volumetric lighting, 8K UHD",
+                "Documentary Photography": "documentary photography, photojournalism style, natural lighting, authentic, National Geographic quality",
+                "Dark Moody Cinematic": "dark moody cinematic, film noir aesthetic, dramatic shadows, high contrast, atmospheric",
+                "Netflix Documentary": "Netflix documentary cinematography, professional film quality, natural lighting, 4K",
+                "True Crime Aesthetic": "true crime documentary aesthetic, forensic photography style, cold color temperature, stark lighting"
+            }
+            
+            style_suffix = style_mappings.get(estilo_imagem, style_mappings["Cinematic Film (Recomendado)"])
+            negative_prompt = "low quality, blurry, distorted, ugly, bad anatomy, watermark, text"
             
             for idx, prompt_data in enumerate(prompts_list):
                 timestamp = prompt_data["timestamp"]
                 prompt_img = prompt_data["prompt"]
                 
-                # Adicionar estilo ao prompt
                 prompt_final = f"{prompt_img}, {style_suffix}"
                 
                 st.markdown(f"#### 📸 {timestamp}")
                 
-                with st.spinner(f"🎨 Gerando imagem profissional {idx+1}/{len(prompts_list)}..."):
+                with st.spinner(f"🎨 Gerando imagem {idx+1}/{len(prompts_list)}..."):
                     try:
                         prompt_encoded = requests.utils.quote(prompt_final)
                         negative_encoded = requests.utils.quote(negative_prompt)
@@ -237,29 +221,28 @@ DESCRIÇÃO + HASHTAGS:
                         
                         if response_img.status_code == 200:
                             image = Image.open(BytesIO(response_img.content))
-                            st.image(image, caption=f"Imagem {estilo_imagem} para {timestamp}", use_container_width=True)
+                            st.image(image, caption=f"Imagem para {timestamp}", use_container_width=True)
                             
                             buf = BytesIO()
                             image.save(buf, format="PNG")
                             st.download_button(
                                 label=f"📥 Download {timestamp}",
                                 data=buf.getvalue(),
-                                file_name=f"tiktok_{estilo_imagem.lower().replace(' ', '_')}_{timestamp.replace(':', '-')}.png",
+                                file_name=f"tiktok_{timestamp.replace(':', '-')}.png",
                                 mime="image/png",
                                 key=f"download_{idx}"
                             )
                         else:
-                            st.warning(f"⚠️ Erro ao gerar imagem. Use o prompt manualmente:")
+                            st.warning(f"⚠️ Erro ao gerar. Use o prompt:")
                             st.code(prompt_final, language="text")
                         
-                        time.sleep(4)
+                        time.sleep(3)
                         
                     except Exception as e:
                         st.error(f"❌ Erro: {str(e)}")
-                        st.info(f"💡 Use este prompt otimizado:")
                         st.code(prompt_final, language="text")
             
-            st.success(f"✅ Todas as {len(prompts_list)} imagens foram geradas!")
+            st.success(f"✅ Todas as imagens geradas!")
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
