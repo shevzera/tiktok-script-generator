@@ -28,7 +28,7 @@ with st.sidebar:
     st.markdown("### 🎨 Geração de Imagens")
     gerar_imagens = st.checkbox("Gerar imagens automaticamente", value=True)
     if gerar_imagens:
-        st.info("As imagens serão geradas com Pollinations.ai (100% gratuito)")
+        st.info("🎨 Imagens com **Pollinations.ai** (gratuito)")
 
 col1, col2 = st.columns([1, 1])
 
@@ -165,7 +165,7 @@ DESCRIÇÃO + HASHTAGS:
         if gerar_imagens and prompts_list:
             st.markdown("---")
             st.markdown("### 🖼️ Imagens Geradas com IA")
-            st.info(f"🎨 Gerando {len(prompts_list)} imagens com Pollinations.ai... Isso pode levar alguns minutos.")
+            st.info(f"🎨 Gerando {len(prompts_list)} imagens... Aguarde.")
             
             for idx, prompt_data in enumerate(prompts_list):
                 timestamp = prompt_data["timestamp"]
@@ -176,9 +176,9 @@ DESCRIÇÃO + HASHTAGS:
                 with st.spinner(f"🎨 Gerando imagem {idx+1}/{len(prompts_list)}..."):
                     try:
                         prompt_encoded = requests.utils.quote(prompt_img)
-                        image_url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=1024&height=1024&nologo=true"
+                        image_url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=1344&height=768&model=flux&nologo=true&enhance=true"
                         
-                        response_img = requests.get(image_url, timeout=30)
+                        response_img = requests.get(image_url, timeout=45)
                         
                         if response_img.status_code == 200:
                             image = Image.open(BytesIO(response_img.content))
@@ -194,17 +194,17 @@ DESCRIÇÃO + HASHTAGS:
                                 key=f"download_{idx}"
                             )
                         else:
-                            st.warning(f"⚠️ Erro ao gerar imagem: {response_img.status_code}")
+                            st.warning(f"⚠️ Erro ao gerar imagem. Use o prompt manualmente:")
                             st.code(prompt_img, language="text")
                         
-                        time.sleep(2)
+                        time.sleep(3)
                         
                     except Exception as e:
                         st.error(f"❌ Erro: {str(e)}")
-                        st.info(f"💡 Use este prompt em Midjourney ou DALL-E:")
+                        st.info(f"💡 Use este prompt em Midjourney, Leonardo.ai ou DALL-E:")
                         st.code(prompt_img, language="text")
             
-            st.success(f"✅ Todas as {len(prompts_list)} imagens foram geradas!")
+            st.success(f"✅ Processo concluído!")
     
     except Exception as e:
         st.error(f"❌ Erro: {str(e)}")
